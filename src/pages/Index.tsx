@@ -274,8 +274,8 @@ export default function Index() {
                       >
                         <span className="mt-1.5 h-5 w-5 rounded-full border-2 border-muted-foreground/40 group-hover:border-primary shrink-0" />
                         <div className="flex-1 min-w-0">
-                          <p className="font-medium text-base leading-snug truncate">{ev.title}</p>
-                          <p className="text-sm text-muted-foreground mt-0.5">
+                          <p className="font-medium text-base leading-snug break-words">{ev.title}</p>
+                          <p className="text-sm text-muted-foreground mt-0.5 break-words">
                             {format(d, "dd/MM/yyyy", { locale: ptBR })}, {format(d, "HH:mm")}
                             {end && ` - ${format(end, "HH:mm")}`}
                           </p>
