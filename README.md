@@ -1,55 +1,519 @@
-# 📱 Minha Agenda — Android com Capacitor
+# 📱 APP MINHA AGENDA (ANDROID)
 
-Guia rápido para compilar e executar o app Android usando Capacitor e Android Studio.
+Guia completo para compilar, gerar e compartilhar o aplicativo Android utilizando Capacitor e Android Studio.
 
-## ⚙️ Pré-requisitos
+---
 
-- [Node.js](https://nodejs.org)
-- [Android Studio](https://developer.android.com/studio) com **Android SDK Platform-Tools** instalado
+# 🚀 Executando o Projeto Android com Capacitor
 
-## 🚀 Passo a Passo
+Este tutorial mostra como:
 
-```bash
-# 1. Instalar dependências
+* Instalar dependências
+* Gerar a build web
+* Criar o projeto Android
+* Gerar APK de instalação
+* Compartilhar o aplicativo
+
+---
+
+# ⚠️ Pré-requisitos
+
+Antes de começar, instale:
+
+* Node.js
+* Android Studio
+
+## Android Studio
+
+Durante a instalação do Android Studio, certifique-se de instalar:
+
+* Android SDK
+* Android SDK Platform-Tools
+* Android SDK Build-Tools
+* Android Emulator
+
+---
+
+# 📂 Abrindo o Projeto
+
+Abra o terminal na pasta do projeto.
+
+Você pode usar:
+
+* PowerShell
+* CMD
+* Terminal do VS Code
+
+---
+
+# 📦 1. Instalar Dependências
+
+```powershell
 npm install
+```
 
-# 2. Adicionar plataforma Android
-npx cap add android
+Se ocorrer conflito de dependências:
 
-# 3. Gerar build web
+```powershell
+npm install --legacy-peer-deps
+```
+
+---
+
+# ⚠️ Avisos do NPM
+
+## ERESOLVE overriding peer dependency
+
+Esse aviso normalmente NÃO impede o funcionamento do projeto.
+
+Exemplo:
+
+```text
+npm warn ERESOLVE overriding peer dependency
+```
+
+Pode ser ignorado se o projeto compilou normalmente.
+
+---
+
+## Vulnerabilities
+
+Se aparecer:
+
+```text
+18 vulnerabilities
+```
+
+Você pode tentar:
+
+```powershell
+npm audit fix
+```
+
+Evite usar:
+
+```powershell
+npm audit fix --force
+```
+
+pois pode quebrar dependências.
+
+---
+
+# ⚙️ 2. Corrigir o App ID do Capacitor
+
+Abra:
+
+```text
+capacitor.config.ts
+```
+
+ou:
+
+```text
+capacitor.config.json
+```
+
+Troque:
+
+```ts
+appId: 'app.lovable.16296ea0dc1d4a41bd0d2a4219c9c30f'
+```
+
+Por um App ID válido:
+
+```ts
+appId: 'com.minhaagenda.app'
+```
+
+---
+
+# ✅ Exemplo Completo do capacitor.config.ts
+
+```ts
+import { CapacitorConfig } from '@capacitor/cli';
+
+const config: CapacitorConfig = {
+  appId: 'com.minhaagenda.app',
+  appName: 'Minha Agenda',
+  webDir: 'dist'
+};
+
+export default config;
+```
+
+---
+
+# 🏗️ 3. Gerar Build Web
+
+```powershell
 npm run build
+```
 
-# 4. Sincronizar com Capacitor
+Se aparecer:
+
+```text
+✓ built in Xs
+```
+
+A build foi gerada corretamente.
+
+---
+
+# 🤖 4. Adicionar Android
+
+```powershell
+npx cap add android
+```
+
+---
+
+# 🔄 5. Sincronizar Projeto
+
+```powershell
+npx cap sync android
+```
+
+---
+
+# ▶️ 6. Abrir no Android Studio
+
+```powershell
+npx cap open android
+```
+
+---
+
+# 📱 7. Gerar APK Release (PROFISSIONAL)
+
+No Android Studio:
+
+```text
+Build → Generate Signed App Bundle or APK
+```
+
+---
+
+## Escolha
+
+```text
+APK
+```
+
+Clique:
+
+```text
+Next
+```
+
+---
+
+# 🔐 8. Criar o Arquivo .JKS
+
+O arquivo `.jks` é a assinatura oficial do aplicativo Android.
+
+⚠️ MUITO IMPORTANTE:
+
+Sem esse arquivo você NÃO conseguirá atualizar o aplicativo futuramente.
+
+Guarde ele em local seguro.
+
+---
+
+## Onde o .jks fica?
+
+O `.jks` fica exatamente no caminho escolhido durante a criação.
+
+Exemplo:
+
+```text
+C:\Users\Patricia\Desktop\minhaagenda.jks
+```
+
+ou:
+
+```text
+C:\Users\Patricia\Documents\minhaagenda.jks
+```
+
+---
+
+# ✅ Configuração Recomendada do JKS
+
+## Key store path
+
+```text
+C:\Users\SEU_USUARIO\Desktop\minhaagenda.jks
+```
+
+---
+
+## Password
+
+```text
+minhaagenda123
+```
+
+---
+
+## Alias
+
+```text
+minhaagenda
+```
+
+---
+
+## Key Password
+
+```text
+minhaagenda123
+```
+
+---
+
+## Validity
+
+```text
+1000
+```
+
+---
+
+## Certificate
+
+### First and Last Name
+
+```text
+Patricia Souza
+```
+
+### Organization
+
+```text
+Minha Agenda
+```
+
+### City or Locality
+
+```text
+Palhoça
+```
+
+### State or Province
+
+```text
+SC
+```
+
+### Country Code
+
+```text
+BR
+```
+
+---
+
+# ⚠️ Erro: Failed to create keystore
+
+Se aparecer:
+
+```text
+Failed to create keystore
+```
+
+Normalmente significa:
+
+* Pasta escolhida não existe
+* Senha muito curta
+* Campo obrigatório vazio
+
+Use uma pasta existente, por exemplo:
+
+```text
+C:\Users\SEU_USUARIO\Desktop\minhaagenda.jks
+```
+
+---
+
+# 📦 9. Gerar APK Release
+
+Depois de configurar o JKS:
+
+Escolha:
+
+```text
+release
+```
+
+Marque:
+
+```text
+✔ V1 Signature
+✔ V2 Signature
+```
+
+Clique:
+
+```text
+Create
+```
+
+---
+
+# ✅ Onde fica o APK?
+
+O APK final normalmente fica em:
+
+```text
+android/app/build/outputs/apk/release/
+```
+
+Arquivo:
+
+```text
+app-release.apk
+```
+
+---
+
+# ❌ NÃO Compartilhe o app-debug.apk
+
+O `app-debug.apk` é apenas para testes.
+
+Problemas do debug:
+
+* Mais lento
+* Maior
+* Modo desenvolvedor ativado
+* Não recomendado para distribuição
+
+---
+
+# ✅ Compartilhe SOMENTE
+
+```text
+app-release.apk
+```
+
+Você pode renomear:
+
+```text
+MinhaAgenda.apk
+```
+
+---
+
+# 📤 Como Compartilhar o APK
+
+Você pode enviar por:
+
+* WhatsApp
+* Google Drive
+* Telegram
+* Email
+
+---
+
+# 📲 Como Instalar no Celular
+
+1. Baixe o APK
+2. Abra o arquivo
+3. Permita:
+
+```text
+Instalar apps de fontes desconhecidas
+```
+
+1. Conclua a instalação
+
+---
+
+# 🎨 Gerar Ícones Automaticamente
+
+Instale:
+
+```powershell
+npm install -D @capacitor/assets
+```
+
+Coloque sua imagem em:
+
+```text
+resources/icon.png
+```
+
+Depois execute:
+
+```powershell
+npx capacitor-assets generate --android
+```
+
+Isso gera automaticamente todos os tamanhos de ícone do aplicativo.
+
+---
+
+# 🍎 iPhone (iOS)
+
+Para iPhone é necessário:
+
+* Mac
+* Xcode
+* Conta Apple Developer
+
+O iOS exige publicação via:
+
+* App Store
+* TestFlight
+
+---
+
+# 🔧 Comandos Úteis
+
+## Abrir Android Studio
+
+```powershell
+npx cap open android
+```
+
+---
+
+## Atualizar apenas os arquivos web
+
+```powershell
+npx cap copy
+```
+
+---
+
+## Atualizar plugins e sincronizar tudo
+
+```powershell
 npx cap sync
-
-# 5. Executar no dispositivo/emulador
-npx cap run android
 ```
 
-> Se o comando acima falhar, use `npx cap open android` para abrir no Android Studio e clique em ▶ **Run**.
+---
 
-## 🔧 Comandos Úteis
+## Remover Android
 
-| Comando | Descrição |
-|---|---|
-| `npx cap open android` | Abre o projeto no Android Studio |
-| `npx cap copy` | Atualiza somente os arquivos web |
-| `npx cap sync` | Sincroniza plugins e arquivos |
-| `npx cap rm android` | Remove a plataforma Android |
-
-## 🛠️ Problemas Comuns
-
-- **SDK não encontrado** — Instale `Android SDK Platform-Tools`, `Build-Tools` e `Command-line Tools` no Android Studio.
-- **JAVA_HOME não configurado** — Configure nas variáveis de ambiente do Windows (o Android Studio normalmente instala automaticamente).
-- **Dispositivo não aparece** — Ative a **Depuração USB** em `Configurações → Opções do Desenvolvedor`.
-
-## 📁 Estrutura do Projeto
-
+```powershell
+npx cap rm android
 ```
-meu-app/
-├── android/
-├── src/
-├── dist/
-├── capacitor.config.ts
-└── package.json
+
+---
+
+## Adicionar Android novamente
+
+```powershell
+npx cap add android
 ```
+
+---
+
+# ✅ Projeto Finalizado
+
+Após esses passos, seu aplicativo Android estará pronto para:
+
+* Instalar em celulares
+* Compartilhar APK
+* Publicar futuramente na Play Store

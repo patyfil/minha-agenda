@@ -1,7 +1,7 @@
 import type { CapacitorConfig } from "@capacitor/cli";
 
 const config: CapacitorConfig = {
-  appId: "app.lovable.16296ea0dc1d4a41bd0d2a4219c9c30f",
+  appId: "com.minhaagenda.app",
   appName: "Minha Agenda",
   webDir: "dist",
   plugins: {
