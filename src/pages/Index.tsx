@@ -55,18 +55,22 @@ export default function Index() {
   }, [events]);
 
   async function handleSave(draft: EventDraft) {
-    if (editing?.notification_id) await cancelNotification(editing.notification_id);
-
     let notificationId: number | null = null;
-    if (draft.notify_minutes_before >= 0) {
-      const id = Math.floor(Math.random() * 2_000_000_000);
-      const scheduled = await scheduleEventNotification({
-        id,
-        title: draft.title,
-        startsAt: new Date(draft.starts_at),
-        minutesBefore: draft.notify_minutes_before,
-      });
-      if (scheduled) notificationId = id;
+    try {
+      if (editing?.notification_id) await cancelNotification(editing.notification_id);
+      if (draft.notify_minutes_before >= 0) {
+        const id = Math.floor(Math.random() * 2_000_000_000);
+        const scheduled = await scheduleEventNotification({
+          id,
+          title: draft.title,
+          startsAt: new Date(draft.starts_at),
+          minutesBefore: draft.notify_minutes_before,
+        });
+        if (scheduled) notificationId = id;
+      }
+    } catch (err) {
+      console.warn("Falha ao agendar notificação (compromisso será salvo mesmo assim):", err);
+      toast.warning("Não foi possível agendar a notificação, mas o compromisso foi salvo.");
     }
 
     const ev: LocalEvent = {
