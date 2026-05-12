@@ -30,11 +30,48 @@ const schema = z.object({
   time: z.string().min(1, "Informe a hora"),
 });
 
+const pad = (n: number) => String(n).padStart(2, "0");
+
+function formatDateInput(value: string) {
+  const digits = value.replace(/\D/g, "").slice(0, 8);
+  if (digits.length <= 2) return digits;
+  if (digits.length <= 4) return `${digits.slice(0, 2)}/${digits.slice(2)}`;
+  return `${digits.slice(0, 2)}/${digits.slice(2, 4)}/${digits.slice(4)}`;
+}
+
+function formatTimeInput(value: string) {
+  const digits = value.replace(/\D/g, "").slice(0, 4);
+  if (digits.length <= 2) return digits;
+  return `${digits.slice(0, 2)}:${digits.slice(2)}`;
+}
+
+function parseTime(value: string) {
+  const match = value.match(/^(\d{1,2}):(\d{2})$/);
+  if (!match) return null;
+  const hours = Number(match[1]);
+  const minutes = Number(match[2]);
+  if (hours > 23 || minutes > 59) return null;
+  return { hours, minutes };
+}
+
+function parseLocalDateTime(dateText: string, timeText: string) {
+  const dateMatch = dateText.match(/^(\d{2})\/(\d{2})\/(\d{4})$/) ?? dateText.match(/^(\d{4})-(\d{2})-(\d{2})$/);
+  const time = parseTime(timeText);
+  if (!dateMatch || !time) return null;
+
+  const isIso = dateText.includes("-");
+  const year = Number(dateMatch[isIso ? 1 : 3]);
+  const month = Number(dateMatch[isIso ? 2 : 2]);
+  const day = Number(dateMatch[isIso ? 3 : 1]);
+  const date = new Date(year, month - 1, day, time.hours, time.minutes, 0, 0);
+  if (date.getFullYear() !== year || date.getMonth() !== month - 1 || date.getDate() !== day) return null;
+  return date;
+}
+
 function toLocalInput(iso: string) {
   const d = new Date(iso);
-  const pad = (n: number) => String(n).padStart(2, "0");
   return {
-    date: `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`,
+    date: `${pad(d.getDate())}/${pad(d.getMonth() + 1)}/${d.getFullYear()}`,
     time: `${pad(d.getHours())}:${pad(d.getMinutes())}`,
   };
 }
@@ -83,14 +120,18 @@ export function EventDialog({ open, onOpenChange, initial, onSave, onDelete }: P
       toast.error(parsed.error.issues[0].message);
       return;
     }
-    const starts = new Date(`${date}T${time}`);
-    if (isNaN(starts.getTime())) {
+    const starts = parseLocalDateTime(date, time);
+    if (!starts) {
       toast.error("Data/hora inválida");
       return;
     }
     let ends: Date | null = null;
     if (endTime) {
-      ends = new Date(`${date}T${endTime}`);
+      ends = parseLocalDateTime(date, endTime);
+      if (!ends) {
+        toast.error("Hora de término inválida");
+        return;
+      }
       if (ends <= starts) ends.setDate(ends.getDate() + 1);
     }
     setBusy(true);
@@ -122,16 +163,40 @@ export function EventDialog({ open, onOpenChange, initial, onSave, onDelete }: P
           <div className="grid grid-cols-2 gap-3">
             <div className="space-y-2">
               <Label htmlFor="d">Data</Label>
-              <Input id="d" type="date" value={date} onChange={(e) => setDate(e.target.value)} />
+              <Input
+                id="d"
+                type="text"
+                inputMode="numeric"
+                value={date}
+                onChange={(e) => setDate(formatDateInput(e.target.value))}
+                placeholder="dd/mm/aaaa"
+                maxLength={10}
+              />
             </div>
             <div className="space-y-2">
               <Label htmlFor="h">Hora</Label>
-              <Input id="h" type="time" value={time} onChange={(e) => setTime(e.target.value)} />
+              <Input
+                id="h"
+                type="text"
+                inputMode="numeric"
+                value={time}
+                onChange={(e) => setTime(formatTimeInput(e.target.value))}
+                placeholder="hh:mm"
+                maxLength={5}
+              />
             </div>
           </div>
           <div className="space-y-2">
             <Label htmlFor="he">Hora de término (opcional)</Label>
-            <Input id="he" type="time" value={endTime} onChange={(e) => setEndTime(e.target.value)} />
+            <Input
+              id="he"
+              type="text"
+              inputMode="numeric"
+              value={endTime}
+              onChange={(e) => setEndTime(formatTimeInput(e.target.value))}
+              placeholder="hh:mm"
+              maxLength={5}
+            />
           </div>
           <div className="space-y-2">
             <Label>Notificação</Label>
