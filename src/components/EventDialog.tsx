@@ -163,16 +163,40 @@ export function EventDialog({ open, onOpenChange, initial, onSave, onDelete }: P
           <div className="grid grid-cols-2 gap-3">
             <div className="space-y-2">
               <Label htmlFor="d">Data</Label>
-              <Input id="d" type="date" value={date} onChange={(e) => setDate(e.target.value)} />
+              <Input
+                id="d"
+                type="text"
+                inputMode="numeric"
+                value={date}
+                onChange={(e) => setDate(formatDateInput(e.target.value))}
+                placeholder="dd/mm/aaaa"
+                maxLength={10}
+              />
             </div>
             <div className="space-y-2">
               <Label htmlFor="h">Hora</Label>
-              <Input id="h" type="time" value={time} onChange={(e) => setTime(e.target.value)} />
+              <Input
+                id="h"
+                type="text"
+                inputMode="numeric"
+                value={time}
+                onChange={(e) => setTime(formatTimeInput(e.target.value))}
+                placeholder="hh:mm"
+                maxLength={5}
+              />
             </div>
           </div>
           <div className="space-y-2">
             <Label htmlFor="he">Hora de término (opcional)</Label>
-            <Input id="he" type="time" value={endTime} onChange={(e) => setEndTime(e.target.value)} />
+            <Input
+              id="he"
+              type="text"
+              inputMode="numeric"
+              value={endTime}
+              onChange={(e) => setEndTime(formatTimeInput(e.target.value))}
+              placeholder="hh:mm"
+              maxLength={5}
+            />
           </div>
           <div className="space-y-2">
             <Label>Notificação</Label>
